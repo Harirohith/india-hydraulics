@@ -37,8 +37,9 @@ export default function AboutPage() {
           { label: "Floor area", value: `${floorArea.toLocaleString("en-IN")} ft²` },
           { label: "ISO certified", value: "9001:2015" },
         ]}
-        image="/stock/engine-room.jpg"
-        imagePosition="50% 42%"
+        image="/stock/hero-industrial.jpg"
+        imageAlt=""
+        imagePosition="50% 55%"
       />
 
       {/* ─── STORY ─── */}
