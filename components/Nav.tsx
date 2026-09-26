@@ -37,12 +37,15 @@ export function Nav() {
       {/* Utility line — the facts and numbers buyers look for first */}
       <div className="hidden bg-carbon text-[13px] text-fog-2 md:block">
         <div className="container-edge flex h-9 items-center justify-between gap-6">
-          <p>
+          <p className="whitespace-nowrap">
             ISO 9001:2015 certified <span className="px-2 text-carbon-3">|</span> Hydraulic hoses &amp;
-            fittings since {company.foundedYear} <span className="px-2 text-carbon-3">|</span>{" "}
-            {company.foundedLocation}
+            fittings since {company.foundedYear}
+            <span className="hidden xl:inline">
+              <span className="px-2 text-carbon-3">|</span>
+              {company.foundedLocation}
+            </span>
           </p>
-          <ul className="flex items-center divide-x divide-carbon-3">
+          <ul className="flex items-center divide-x divide-carbon-3 whitespace-nowrap">
             <li className="pr-4">
               <a href={company.phoneHref} className="transition-colors hover:text-white">
                 Call {company.phoneDisplay}
@@ -58,7 +61,7 @@ export function Nav() {
                 WhatsApp
               </a>
             </li>
-            <li className="hidden pl-4 lg:block">
+            <li className="hidden pl-4 xl:block">
               <a href={company.emailHref} className="transition-colors hover:text-white">
                 {company.email}
               </a>

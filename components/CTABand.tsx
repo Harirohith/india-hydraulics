@@ -1,6 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
-import { company } from "@/lib/content";
+import { company, emailParts } from "@/lib/content";
 
 /**
  * The last step of every page's story: turn interest into an enquiry.
@@ -46,7 +46,15 @@ export function CTABand({
                 </a>
               ),
             },
-            { k: "Email", v: <a href={company.emailHref} className="break-all hover:underline">{company.email}</a> },
+            {
+              k: "Email",
+              v: (
+                <a href={company.emailHref} className="hover:underline">
+                  {emailParts[0]}@<wbr />
+                  {emailParts[1]}
+                </a>
+              ),
+            },
             { k: "Hours", v: company.hours },
           ].map((row) => (
             <div key={row.k} className="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-white/20 py-3.5">

@@ -24,6 +24,9 @@ export const company = {
   tagline: "Powering Source",
 };
 
+/** The email split at "@" so layouts can offer a clean line break (<wbr>). */
+export const emailParts = company.email.split("@") as [string, string];
+
 /** Years in business, computed at build time from the founding year. */
 export const yearsInBusiness = new Date().getFullYear() - company.foundedYear;
 

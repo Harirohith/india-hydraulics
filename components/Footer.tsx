@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { company, locations, productCategories } from "@/lib/content";
+import { company, emailParts, locations, productCategories } from "@/lib/content";
 import { ISOBadge } from "./ISOBadge";
 
 const companyLinks = [
@@ -89,7 +89,8 @@ export function Footer() {
               <dt className="text-fog-2">Email</dt>
               <dd className="min-w-0 break-words">
                 <a href={company.emailHref} className="text-white hover:underline">
-                  {company.email}
+                  {emailParts[0]}@<wbr />
+                  {emailParts[1]}
                 </a>
               </dd>
               <dt className="text-fog-2">Hours</dt>

@@ -206,6 +206,7 @@
   .link:hover { text-decoration-thickness: 2px; }
   /* Standalone "go somewhere" link: underlined label + arrow */
   .link-arrow {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
@@ -214,6 +215,12 @@
     padding-bottom: 0.2rem;
     border-bottom: 1px solid currentColor;
     transition: color 180ms ease;
+  }
+  /* Invisible hit area so the tap target is at least 44px tall */
+  .link-arrow::after {
+    content: "";
+    position: absolute;
+    inset: -0.5rem -0.25rem;
   }
   .link-arrow .arrow { transition: transform 220ms var(--ease); }
   .link-arrow:hover { color: rgb(var(--c-brand)); }
@@ -422,6 +429,12 @@ html.js [data-reveal-group]:not([data-revealed]) > * {
 [data-reveal-group][data-revealed] > :nth-child(8)  { animation-delay: 420ms; }
 [data-reveal-group][data-revealed] > :nth-child(9)  { animation-delay: 480ms; }
 [data-reveal-group][data-revealed] > :nth-child(n+10) { animation-delay: 540ms; }
+/* A .rule-grid draws its hairlines with its own background, so revealing its
+   cells one by one would first show a grey slab — reveal the grid whole. */
+html.js .rule-grid[data-reveal-group]:not([data-revealed]) { opacity: 0; }
+html.js .rule-grid[data-reveal-group]:not([data-revealed]) > * { opacity: 1; }
+.rule-grid[data-reveal-group][data-revealed] { animation: ih-rise 0.75s var(--ease) backwards; }
+.rule-grid[data-reveal-group][data-revealed] > * { animation: none; }
 
 /* 3a. ORDER FLOW — numbered stations joined by a line that fills */
 .flow-node {
