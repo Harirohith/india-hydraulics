@@ -1,115 +1,121 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
+import { company, locations, productCategories } from "@/lib/content";
 import { ISOBadge } from "./ISOBadge";
 
-const sections = [
-  {
-    heading: "Catalogue",
-    links: [
-      { href: "/products", label: "All products" },
-      { href: "/products#hoses", label: "Hoses & assemblies" },
-      { href: "/products#fittings", label: "Fittings & adapters" },
-      { href: "/products#seals", label: "Seals & O-rings" },
-    ],
-  },
-  {
-    heading: "Company",
-    links: [
-      { href: "/about", label: "About" },
-      { href: "/industries", label: "Industries served" },
-      { href: "/about#facilities", label: "Facilities" },
-      { href: "/about#standards", label: "Standards" },
-    ],
-  },
-  {
-    heading: "Contact",
-    links: [
-      { href: "tel:+919443189164", label: "+91 94431 89164" },
-      { href: "/contact", label: "Enquiry form" },
-      { href: "/contact#locations", label: "Locations" },
-    ],
-  },
+const companyLinks = [
+  { href: "/about", label: "About the company" },
+  { href: "/about#quality", label: "Quality & testing" },
+  { href: "/about#facilities", label: "Facilities" },
+  { href: "/industries", label: "Industries served" },
+  { href: "/contact", label: "Contact & locations" },
 ];
 
 export function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="mt-32 border-t border-line-1 bg-surface-1">
-      <div className="container-edge py-16">
-        <div className="grid gap-12 md:grid-cols-12">
-          <div className="md:col-span-4">
-            <div className="flex items-center gap-3">
-              <Image src="/logo.jpg" alt="India Hydraulics" width={32} height={32} className="rounded-sm" />
-              <span className="font-display text-base font-semibold tracking-tight2 text-ink-1">
-                INDIA HYDRAULICS
+    <footer className="bg-carbon text-fog">
+      <div className="container-edge pb-10 pt-16 md:pt-20">
+        {/* Name plate */}
+        <div className="flex flex-col gap-8 border-b border-carbon-3 pb-12 md:flex-row md:items-end md:justify-between">
+          <Link href="/" className="flex items-center gap-4" aria-label={`${company.name} — home`}>
+            <span className="grid h-14 w-14 place-items-center bg-white">
+              <Image src="/logo-mark.png" alt="" width={50} height={50} />
+            </span>
+            <span className="leading-none">
+              <span className="block font-display text-4xl font-bold uppercase tracking-[0.02em] text-white md:text-5xl">
+                India Hydraulics
               </span>
-            </div>
-            <p className="mt-5 max-w-[36ch] text-base leading-relaxed text-ink-2">
-              Hydraulic hoses, hose assemblies, fittings, adapters, seals and
-              quick-release couplings. Designed and supplied from Tiruchengode,
-              Tamil Nadu.
+              <span className="mt-2 block text-sm text-fog-2">{company.tagline}</span>
+            </span>
+          </Link>
+          <ISOBadge size="lg" tone="dark" />
+        </div>
+
+        <div className="grid gap-12 pt-12 sm:grid-cols-2 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <p className="max-w-[40ch] leading-relaxed text-fog-2">
+              Hydraulic hoses, crimped hose assemblies, CNC-machined fittings, adapters and seals — built and
+              pressure-tested in Tiruchengode, Tamil Nadu, for customers across India and overseas.
             </p>
-            <dl className="mt-8 grid grid-cols-2 gap-y-3 text-sm text-ink-3">
-              <dt>Standards</dt>
-              <dd className="text-ink-1">ISO · SAE · DIN · JIS</dd>
-              <dt>CAD</dt>
-              <dd className="text-ink-1">SolidWorks · EdgeCAM</dd>
-              <dt>Founded</dt>
-              <dd className="text-ink-1">1996</dd>
-            </dl>
-            <div className="mt-5">
-              <ISOBadge />
-            </div>
           </div>
 
-          {sections.map((s) => (
-            <div key={s.heading} className="md:col-span-2">
-              <h4 className="text-xs uppercase tracking-wide font-medium text-brand">
-                {s.heading}
-              </h4>
-              <ul className="mt-4 space-y-2.5">
-                {s.links.map((l) => (
-                  <li key={l.href + l.label}>
-                    <Link
-                      href={l.href}
-                      className="text-base text-ink-2 transition-colors duration-180 hover:text-ink-1"
-                    >
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="lg:col-span-2">
+            <h2 className="font-display text-xl font-semibold text-white">Products</h2>
+            <ul className="mt-4 space-y-2.5 text-[0.95rem] text-fog-2">
+              {productCategories.slice(0, 5).map((c) => (
+                <li key={c.id}>
+                  <Link href={`/products#${c.id}`} className="transition-colors hover:text-white">
+                    {c.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href="/products#catalogue" className="text-white underline underline-offset-4 hover:no-underline">
+                  Full catalogue
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-          <div className="md:col-span-2">
-            <h4 className="text-xs uppercase tracking-wide font-medium text-brand">
-              Address
-            </h4>
-            <address className="mt-4 not-italic text-base leading-relaxed text-ink-2">
-              89, Sankari Road, Opp Court,
-              <br />
-              Seetharampalayam,
-              <br />
-              Tiruchengode 637211
-              <br />
-              Tamil Nadu, India
-            </address>
+          <div className="lg:col-span-2">
+            <h2 className="font-display text-xl font-semibold text-white">Company</h2>
+            <ul className="mt-4 space-y-2.5 text-[0.95rem] text-fog-2">
+              {companyLinks.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="transition-colors hover:text-white">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="sm:col-span-2 lg:col-span-4">
+            <h2 className="font-display text-xl font-semibold text-white">Contact</h2>
+            <dl className="mt-4 grid grid-cols-[6.5rem_1fr] gap-x-4 gap-y-2.5 text-[0.95rem]">
+              <dt className="text-fog-2">Phone</dt>
+              <dd>
+                <a href={company.phoneHref} className="text-white hover:underline">
+                  {company.phoneDisplay}
+                </a>
+              </dd>
+              <dt className="text-fog-2">WhatsApp</dt>
+              <dd>
+                <a href={company.whatsapp} target="_blank" rel="noopener noreferrer" className="text-white hover:underline">
+                  {company.whatsappDisplay}
+                </a>
+              </dd>
+              <dt className="text-fog-2">Email</dt>
+              <dd className="min-w-0 break-words">
+                <a href={company.emailHref} className="text-white hover:underline">
+                  {company.email}
+                </a>
+              </dd>
+              <dt className="text-fog-2">Hours</dt>
+              <dd className="text-white">{company.hours}</dd>
+            </dl>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-line-1 pt-6 md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-ink-3">
-            © {year} India Hydraulics · Tiruchengode
+        <div className="mt-12 grid gap-8 border-t border-carbon-3 pt-10 sm:grid-cols-2 lg:grid-cols-4">
+          {locations.map((loc) => (
+            <address key={loc.id} className="not-italic text-[0.95rem] leading-relaxed text-fog-2">
+              <span className="mb-1 block font-medium text-white">{loc.label}</span>
+              {loc.address.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
+            </address>
+          ))}
+        </div>
+
+        <div className="mt-12 flex flex-col gap-3 border-t border-carbon-3 pt-6 text-sm text-fog-2 md:flex-row md:items-center md:justify-between">
+          <p>
+            © {year} {company.name}, {company.foundedLocation}
           </p>
-          <a
-            href="https://wa.me/919443189164"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-ink-2 hover:text-ink-1 transition-colors"
-          >
-            WhatsApp: +91 94431 89164
-          </a>
+          <p className="font-mono text-xs tracking-[0.08em]">BUILT TO ISO · SAE · DIN · JIS</p>
         </div>
       </div>
     </footer>

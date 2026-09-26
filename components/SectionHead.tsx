@@ -1,54 +1,48 @@
-﻿import * as React from "react";
+import * as React from "react";
 
 /**
- * Section heading. Eyebrow (section number) is intentionally restrained:
- * per the taste skill, max 1 eyebrow per 3 sections. Use sparingly.
+ * Section header, set editorially: title on the left, intro (and an
+ * optional action link) on the right from lg. Reveals once on scroll.
+ *
+ *   <SectionHead kicker="Product range" title="Nine families, one supplier."
+ *     intro="…" action={<Link className="link-arrow" …>All products <span className="arrow">→</span></Link>} />
  */
 export function SectionHead({
-  num,
-  eyebrow,
+  kicker,
   title,
   intro,
-  align = "left",
+  action,
+  tone = "light",
+  as: Tag = "h2",
+  id,
+  className = "",
 }: {
-  /** Section number e.g. "01 / 05" — rendered as monospace coord label */
-  num?: string;
-  /** Optional eyebrow label above title. Should be uppercase mono. */
-  eyebrow?: string;
-  title: string;
-  intro?: string;
-  align?: "left" | "center";
+  kicker?: string;
+  title: React.ReactNode;
+  intro?: React.ReactNode;
+  action?: React.ReactNode;
+  tone?: "light" | "dark";
+  as?: "h1" | "h2" | "h3";
+  id?: string;
+  className?: string;
 }) {
+  const dark = tone === "dark";
   return (
     <header
-      className={`mb-12 md:mb-16 max-w-3xl ${
-        align === "center" ? "mx-auto text-center" : ""
-      }`}
+      data-reveal
+      className={`mb-12 grid gap-6 md:mb-16 lg:grid-cols-12 lg:items-end lg:gap-12 ${className}`}
     >
-      {(num || eyebrow) && (
-        <div className="mb-5 flex items-center gap-3 text-brand">
-          {num && (
-            <span className="font-mono text-micro tracking-label uppercase text-ink-3">
-              {num}
-            </span>
-          )}
-          {num && eyebrow && (
-            <span className="block h-px w-8 bg-brand-dim" aria-hidden="true" />
-          )}
-          {eyebrow && (
-            <span className="font-mono text-micro tracking-label uppercase text-brand">
-              {eyebrow}
-            </span>
-          )}
+      <div className="lg:col-span-7">
+        {kicker && <p className={`t-kicker ${dark ? "!text-fog-2" : ""}`}>{kicker}</p>}
+        <Tag id={id} className={`t-h2 mt-3 ${dark ? "text-white" : "text-ink"}`}>
+          {title}
+        </Tag>
+      </div>
+      {(intro || action) && (
+        <div className="lg:col-span-5">
+          {intro && <p className={`t-lede ${dark ? "!text-fog-2" : ""}`}>{intro}</p>}
+          {action && <div className={intro ? "mt-6" : ""}>{action}</div>}
         </div>
-      )}
-      <h2 className="font-display text-h3 md:text-h2 font-medium tracking-tight2 text-ink-1">
-        {title}
-      </h2>
-      {intro && (
-        <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-ink-2">
-          {intro}
-        </p>
       )}
     </header>
   );

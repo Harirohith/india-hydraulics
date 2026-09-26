@@ -3,142 +3,168 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { company } from "@/lib/content";
 
+// Order follows a buyer's questions: what do you make → who is it for →
+// can I trust you → how do I order.
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
   { href: "/products", label: "Products" },
   { href: "/industries", label: "Industries" },
+  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
+
+function isActive(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  // Close the mobile menu on navigation; lock page scroll while it is open.
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-line-1 bg-surface-0/90 backdrop-blur supports-[backdrop-filter]:bg-surface-0/80">
-      <div className="container-edge flex h-16 items-center justify-between gap-6">
-        <Link
-          href="/"
-          className="group relative flex items-center gap-3 press"
-          aria-label="India Hydraulics home"
-        >
-          <Image
-            src="/logo.jpg"
-            alt="India Hydraulics"
-            width={36}
-            height={36}
-            className="rounded-sm transition-transform duration-220 group-hover:scale-105"
-          />
-          <div className="flex flex-col leading-none">
-            <span className="font-display text-base font-semibold tracking-tight2 text-ink-1 group-hover:text-brand transition-colors duration-180">
-              INDIA HYDRAULICS
-            </span>
-            <span className="font-mono text-xs tracking-label text-ink-3 group-hover:text-ink-2 transition-colors duration-180">
-              EST. 1996 · TIRUCHENGODE
-            </span>
-          </div>
-          {/* Brand-blue accent that slides in on hover, like a hydraulic ram */}
-          <span
-            aria-hidden="true"
-            className="absolute -bottom-2 left-[3.25rem] right-0 h-px bg-brand origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-220"
-          />
-        </Link>
-
-        {/* Desktop nav */}
-        <nav aria-label="Primary" className="hidden md:block">
-          <ul className="flex items-center gap-6">
-            {links.map((l) => {
-              const active = pathname === l.href;
-              return (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`ram text-sm font-medium transition-colors duration-180 ${
-                      active
-                        ? "text-brand"
-                        : "text-ink-2 hover:text-ink-1"
-                    }`}
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-
-        <div className="hidden md:flex items-center gap-3">
-          <Link href="/contact" className="btn-secondary press">
-            Request quote
-          </Link>
-        </div>
-
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-        >
-          <span
-            className={`block h-0.5 w-6 bg-ink-1 transition-all duration-220 ${
-              open ? "translate-y-2 rotate-45" : ""
-            }`}
-          />
-          <span
-            className={`block h-0.5 w-6 bg-ink-1 transition-opacity duration-220 ${
-              open ? "opacity-0" : ""
-            }`}
-          />
-          <span
-            className={`block h-0.5 w-6 bg-ink-1 transition-all duration-220 ${
-              open ? "-translate-y-2 -rotate-45" : ""
-            }`}
-          />
-        </button>
-      </div>
-
-      {/* Mobile menu panel */}
-      {open && (
-        <nav
-          aria-label="Mobile navigation"
-          className="md:hidden border-t border-line-1 bg-surface-0"
-        >
-          <ul className="container-edge py-4 space-y-1">
-            {links.map((l) => {
-              const active = pathname === l.href;
-              return (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className={`block py-3 px-4 text-base font-medium rounded transition-colors ${
-                      active
-                        ? "text-brand bg-brand-dim/40"
-                        : "text-ink-1 hover:bg-surface-1"
-                    }`}
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              );
-            })}
-            <li className="pt-3 px-4">
-              <Link
-                href="/contact"
-                onClick={() => setOpen(false)}
-                className="btn-primary press w-full justify-center"
+    <>
+      {/* Utility line — the facts and numbers buyers look for first */}
+      <div className="hidden bg-carbon text-[13px] text-fog-2 md:block">
+        <div className="container-edge flex h-9 items-center justify-between gap-6">
+          <p>
+            ISO 9001:2015 certified <span className="px-2 text-carbon-3">|</span> Hydraulic hoses &amp;
+            fittings since {company.foundedYear} <span className="px-2 text-carbon-3">|</span>{" "}
+            {company.foundedLocation}
+          </p>
+          <ul className="flex items-center divide-x divide-carbon-3">
+            <li className="pr-4">
+              <a href={company.phoneHref} className="transition-colors hover:text-white">
+                Call {company.phoneDisplay}
+              </a>
+            </li>
+            <li className="px-4">
+              <a
+                href={company.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-white"
               >
-                Request a quote
-              </Link>
+                WhatsApp
+              </a>
+            </li>
+            <li className="hidden pl-4 lg:block">
+              <a href={company.emailHref} className="transition-colors hover:text-white">
+                {company.email}
+              </a>
             </li>
           </ul>
-        </nav>
-      )}
-    </header>
+        </div>
+      </div>
+
+      <header className="sticky top-0 z-40 border-b border-rule bg-paper">
+        <div className="container-edge flex h-[var(--nav-h)] items-center justify-between gap-6">
+          <Link href="/" className="flex items-center gap-3" aria-label={`${company.name} — home`}>
+            <Image src="/logo-mark.png" alt="" width={46} height={46} priority />
+            <span className="leading-none">
+              <span className="block font-display text-[1.6rem] font-bold uppercase tracking-[0.02em] text-ink">
+                India Hydraulics
+              </span>
+              <span className="mt-1 block text-[12px] text-ink-3">{company.tagline}</span>
+            </span>
+          </Link>
+
+          <nav aria-label="Primary" className="hidden h-full lg:block">
+            <ul className="flex h-full items-stretch gap-9">
+              {links.map((l) => {
+                const active = isActive(pathname, l.href);
+                return (
+                  <li key={l.href} className="relative flex items-center">
+                    <Link
+                      href={l.href}
+                      aria-current={active ? "page" : undefined}
+                      className={`text-[0.975rem] font-medium transition-colors ${
+                        active ? "text-ink" : "text-ink-2 hover:text-ink"
+                      }`}
+                    >
+                      {l.label}
+                    </Link>
+                    {active && <span aria-hidden="true" className="absolute inset-x-0 -bottom-px h-[3px] bg-brand" />}
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <div className="hidden items-center gap-6 lg:flex">
+            <a href={company.phoneHref} className="text-[0.975rem] font-medium text-ink hover:text-brand">
+              {company.phoneDisplay}
+            </a>
+            <Link href="/contact#enquiry" className="btn btn-primary btn-sm">
+              Request a quote <span className="arrow" aria-hidden="true">→</span>
+            </Link>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="btn btn-outline btn-sm min-w-[5.5rem] lg:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+          >
+            {open ? "Close" : "Menu"}
+          </button>
+        </div>
+
+        {open && (
+          <nav
+            id="mobile-menu"
+            aria-label="Mobile"
+            className="h-[calc(100dvh-var(--nav-h))] overflow-y-auto border-t border-rule bg-paper lg:hidden"
+          >
+            <ul className="container-edge pt-2">
+              {[{ href: "/", label: "Home" }, ...links].map((l, i) => {
+                const active = l.href === "/" ? pathname === "/" : isActive(pathname, l.href);
+                return (
+                  <li key={l.href} className="load-rise border-b border-rule" style={{ ["--d" as string]: i * 40 }}>
+                    <Link
+                      href={l.href}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex items-center justify-between py-4 font-display text-[2rem] font-semibold leading-none ${
+                        active ? "text-brand" : "text-ink"
+                      }`}
+                    >
+                      {l.label}
+                      <span aria-hidden="true" className="text-xl text-ink-3">→</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="container-edge grid gap-3 pb-10 pt-8">
+              <Link href="/contact#enquiry" className="btn btn-primary btn-lg w-full">
+                Request a quote <span className="arrow" aria-hidden="true">→</span>
+              </Link>
+              <div className="grid grid-cols-2 gap-3">
+                <a href={company.phoneHref} className="btn btn-outline">
+                  Call now
+                </a>
+                <a href={company.whatsapp} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp">
+                  WhatsApp
+                </a>
+              </div>
+              <p className="pt-2 text-center text-sm text-ink-3">
+                {company.phoneDisplay} · {company.hours}
+              </p>
+            </div>
+          </nav>
+        )}
+      </header>
+    </>
   );
 }

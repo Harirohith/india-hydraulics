@@ -4,91 +4,59 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 /**
- * Drives the scroll-triggered animation system.
+ * Drives scroll reveals (see the MOTION block in app/globals.css).
  *
- *  - Every <main section> after the first gets .anim-ready (section-level fade-up).
- *  - Elements marked data-stagger get sequential delays (default 80ms,
- *    override per-container with data-stagger-step="<ms>").
- *  - Elements marked data-anim (fade-up | fade | slide-left | slide-right) get
- *    the matching animation when they enter the viewport.
- *  - data-delay="<ms>" sets an explicit pre-delay on a single element
- *    (wired via the --delay CSS variable on [data-delay]).
+ *  - [data-reveal]        the element rises into place once it is 12% visible
+ *  - [data-reveal-group]  its children rise in reading order, 70ms apart
  *
- * The effect re-runs on every pathname change so client-side navigations
- * pick up the new page's sections + data-anim nodes. A 2s safety net force-
- * reveals anything still hidden, so a slow scroll or off-screen content
- * never strands a section at opacity 0.
+ * Marks elements with the `data-revealed` attribute (not a class, so React
+ * re-renders never wipe it). A MutationObserver picks up nodes mounted later
+ * (filtered product lists, client navigation), so nothing is left hidden.
  */
 export function AnimationObserver() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Mark the html as JS-ready so the .anim-ready opacity-0 rule can apply.
-    document.documentElement.classList.add("js-loaded");
+    // Tell the inline boot script in layout.tsx that reveals are live.
+    (window as unknown as { __ihReveal?: boolean }).__ihReveal = true;
 
-    const observer = new IntersectionObserver(
+    const SELECTOR = "[data-reveal]:not([data-revealed]), [data-reveal-group]:not([data-revealed])";
+    const reveal = (el: Element) => el.setAttribute("data-revealed", "");
+
+    if (!("IntersectionObserver" in window)) {
+      document.querySelectorAll(SELECTOR).forEach(reveal);
+      return;
+    }
+
+    const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          const el = entry.target as HTMLElement;
-
-          // Honour explicit pre-delay
-          const explicitDelay = el.dataset.delay;
-          if (explicitDelay) {
-            el.style.setProperty("--delay", `${explicitDelay}ms`);
-          }
-
-          el.classList.add("anim-visible");
-          observer.unobserve(el);
-
-          // Stagger children inside this section
-          const step = Number(el.dataset.staggerStep) || 80;
-          el.querySelectorAll<HTMLElement>("[data-stagger]").forEach((child, i) => {
-            const childDelay = child.dataset.delay;
-            if (childDelay) {
-              child.style.setProperty("--delay", `${childDelay}ms`);
-            } else {
-              child.style.animationDelay = `${i * step}ms`;
-            }
-            child.classList.add("anim-visible");
-          });
+          reveal(entry.target);
+          io.unobserve(entry.target);
         }
       },
-      { threshold: 0.07, rootMargin: "0px 0px -48px 0px" }
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
     );
 
-    // Section-level fade-up (skip the very first section — hero uses its own entrance)
-    const sections = [...document.querySelectorAll("main section")].slice(1);
-    sections.forEach((s) => {
-      s.classList.add("anim-ready");
-      observer.observe(s);
-    });
+    const watch = (root: ParentNode) =>
+      root.querySelectorAll(SELECTOR).forEach((el) => io.observe(el));
+    watch(document);
 
-    // Per-element animations (works inside the hero too)
-    document.querySelectorAll<HTMLElement>("[data-anim]").forEach((el) => {
-      const explicitDelay = el.dataset.delay;
-      if (explicitDelay) {
-        el.style.setProperty("--delay", `${explicitDelay}ms`);
+    const mo = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        m.addedNodes.forEach((node) => {
+          if (!(node instanceof Element)) return;
+          if (node.matches(SELECTOR)) io.observe(node);
+          watch(node);
+        });
       }
-      observer.observe(el);
     });
-
-    // Safety net — if anything is still .anim-ready (no .anim-visible) after
-    // 2s, force-reveal. Catches: very tall sections that never reach 7%
-    // threshold, sections already fully on screen at mount (rare race),
-    // elements that scroll past too fast.
-    const safety = window.setTimeout(() => {
-      document
-        .querySelectorAll<HTMLElement>(".anim-ready:not(.anim-visible)")
-        .forEach((el) => el.classList.add("anim-visible"));
-      document
-        .querySelectorAll<HTMLElement>("[data-anim]:not(.anim-visible)")
-        .forEach((el) => el.classList.add("anim-visible"));
-    }, 2000);
+    mo.observe(document.body, { childList: true, subtree: true });
 
     return () => {
-      observer.disconnect();
-      window.clearTimeout(safety);
+      io.disconnect();
+      mo.disconnect();
     };
   }, [pathname]);
 

@@ -1,26 +1,33 @@
-export function ISOBadge({ size = "sm" }: { size?: "sm" | "lg" }) {
+/**
+ * ISO 9001:2015 mark — set like a certificate stamp, no icon.
+ *  size  sm = one-line mark, lg = two-line block
+ *  tone  light (on paper) / dark (on carbon)
+ */
+export function ISOBadge({
+  size = "sm",
+  tone = "light",
+}: {
+  size?: "sm" | "lg";
+  tone?: "light" | "dark";
+}) {
+  const dark = tone === "dark";
+  const frame = dark ? "border-fog/40 text-fog" : "border-ink text-ink";
+
   if (size === "lg") {
     return (
-      <div className="inline-flex items-center gap-3 border-2 border-brand bg-brand-dim px-5 py-3">
-        <div className="flex flex-col items-center leading-none">
-          <span className="text-xs font-mono uppercase tracking-widest text-brand opacity-70">Certified</span>
-          <span className="text-2xl font-display font-bold text-brand leading-none">ISO</span>
-        </div>
-        <div className="w-px h-10 bg-brand opacity-30" />
-        <div className="flex flex-col leading-none">
-          <span className="text-lg font-display font-bold text-brand">9001:2015</span>
-          <span className="text-xs font-medium text-ink-2 mt-0.5">Quality Management</span>
-        </div>
+      <div className={`inline-flex items-stretch border ${frame}`}>
+        <span className="flex items-center px-4 font-display text-3xl font-semibold leading-none">ISO</span>
+        <span className={`flex flex-col justify-center border-l px-4 py-2.5 ${dark ? "border-fog/40" : "border-ink"}`}>
+          <span className="font-mono text-sm font-semibold tracking-wide">9001:2015</span>
+          <span className={`text-xs ${dark ? "text-fog-2" : "text-ink-3"}`}>Certified quality management</span>
+        </span>
       </div>
     );
   }
 
   return (
-    <span className="inline-flex items-center gap-1.5 border border-brand bg-brand-dim px-2.5 py-1 text-sm font-semibold text-brand">
-      <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="none">
-        <path d="M8 1L10 6H15L11 9.5L12.5 15L8 11.5L3.5 15L5 9.5L1 6H6L8 1Z" fill="currentColor" opacity="0.8"/>
-      </svg>
-      ISO 9001:2015 Certified
+    <span className={`inline-flex items-center border px-2.5 py-1 font-mono text-xs font-semibold tracking-wide ${frame}`}>
+      ISO 9001:2015 certified
     </span>
   );
 }

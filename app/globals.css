@@ -2,242 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── SCROLL-TRIGGERED ANIMATIONS ─────────────────────────────────
-   .anim-ready         = initial hidden state (set by AnimationObserver)
-   .anim-visible       = in-viewport state that plays the animation
-   data-stagger        = child elements that receive sequential delays
-   data-anim           = explicit per-element animation (fade-up | fade |
-                         slide-left | slide-right | flow | draw)
-   data-delay="<ms>"   = explicit pre-delay on a single element
-   data-stagger-step   = override default 80ms cascade for one container
-
-   All hide rules are scoped to html.js-loaded (set by AnimationObserver on
-   mount) so a JS failure or no-JS user still sees the page contents.
-   ────────────────────────────────────────────────────────────────── */
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translate3d(0, 30px, 0); }
-  to   { opacity: 1; transform: translate3d(0, 0, 0);    }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translate3d(-24px, 0, 0); }
-  to   { opacity: 1; transform: translate3d(0, 0, 0);     }
-}
-@keyframes slideInRight {
-  from { opacity: 0; transform: translate3d(24px, 0, 0); }
-  to   { opacity: 1; transform: translate3d(0, 0, 0);    }
-}
-@keyframes flowStroke {
-  /* stroke-dashoffset must be set on the element using --dash + --flow-len */
-  to { stroke-dashoffset: var(--flow-end, -1200); }
-}
-@keyframes breathe {
-  0%, 100% { opacity: 0.55; }
-  50%      { opacity: 1;    }
-}
-@keyframes shakeX {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  20%      { transform: translate3d(-4px, 0, 0); }
-  40%      { transform: translate3d(4px, 0, 0); }
-  60%      { transform: translate3d(-3px, 0, 0); }
-  80%      { transform: translate3d(2px, 0, 0); }
-}
-@keyframes drawIn {
-  from { stroke-dashoffset: var(--draw-len, 2000); }
-  to   { stroke-dashoffset: 0; }
-}
-@keyframes heroRam {
-  /* The brand blue "ram" line that extends under the hero CTA on load */
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
-}
-@keyframes pingDot {
-  0%   { transform: scale(1);   opacity: 0.8; }
-  80%  { transform: scale(2.4); opacity: 0;   }
-  100% { transform: scale(2.4); opacity: 0;   }
-}
-
-html.js-loaded .anim-ready {
-  opacity: 0;
-  transform: translate3d(0, 30px, 0);
-  transition: none;
-}
-html.js-loaded .anim-ready.anim-visible {
-  animation: fadeInUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* Explicit markers for individual elements */
-html.js-loaded [data-anim="fade-up"] {
-  opacity: 0;
-  animation: fadeInUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-play-state: paused;
-}
-html.js-loaded [data-anim="fade"] {
-  opacity: 0;
-  animation: fadeIn 0.5s ease forwards;
-  animation-play-state: paused;
-}
-html.js-loaded [data-anim="slide-left"] {
-  opacity: 0;
-  animation: slideInLeft 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-play-state: paused;
-}
-html.js-loaded [data-anim="slide-right"] {
-  opacity: 0;
-  animation: slideInRight 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-play-state: paused;
-}
-html.js-loaded [data-anim].anim-visible,
-html.js-loaded [data-stagger].anim-visible {
-  animation-play-state: running;
-}
-html.js-loaded [data-stagger] {
-  opacity: 0;
-  animation: fadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-play-state: paused;
-}
-
-/* Optional delay modifier — data-delay="200" → 200ms pre-delay */
-[data-delay] {
-  animation-delay: var(--delay, 0ms);
-}
-
-/* Honour reduced-motion preference */
-@media (prefers-reduced-motion: reduce) {
-  .anim-ready,
-  [data-anim],
-  [data-stagger] {
-    opacity: 1 !important;
-    transform: none !important;
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
 /* ──────────────────────────────────────────────────────────────────
-   DESIGN TOKENS — Light theme / white + blue / industrial B2B
-   Color system:
-   - blue (--brand) is the accent: primary CTAs, links, active states
-   - teal (--accent) is reserved: small highlights, data points, badges
-   - charcoal/slate for text hierarchy
-   - soft white/blue tints for surfaces (no pure #FFFFFF everywhere)
-   Modular base: 4px spacing, 1.25 type ratio, 16px body.
-   Components read from these tokens, never hardcode.
+   INDIA HYDRAULICS — "catalogue" design system
+   Ink on paper. Near-black type, warm off-white paper, steel-grey rules,
+   carbon bands, and one brand colour — the logo's indigo — used flat.
+   No gradients, glows, blobs or decorative icons. Square, machined edges.
+
+   Colours are RGB channel triples (Tailwind opacity modifiers work).
+   In raw CSS: rgb(var(--c-ink)) or rgb(var(--c-ink) / 0.5).
    ────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* Surface — soft white / pale blue engineering paper */
-  --surface-0:   #F8FAFC;  /* page base, soft white */
-  --surface-1:   #F1F5F9;  /* section alternation — pale blue-gray */
-  --surface-2:   #FFFFFF;  /* cards / raised cells */
-  --surface-3:   #EFF6FF;  /* elevated / hover state — blue tint */
+  --c-paper:       255 255 255;  /* #FFFFFF page */
+  --c-paper-2:     245 244 240;  /* #F5F4F0 warm alternate sections */
+  --c-paper-3:     234 232 226;  /* #EAE8E2 product tiles, wells */
 
-  /* Lines */
-  --hairline:    #E2E8F0;  /* dividers — light steel */
-  --border:      #94A3B8;  /* visible borders — steel */
+  --c-ink:         18 19 22;     /* #121316 headings */
+  --c-ink-2:       61 64 71;     /* #3D4047 body (9:1 on paper-2) */
+  --c-ink-3:       94 97 104;    /* #5E6168 labels (5.1:1 on paper-3) */
 
-  /* Text — charcoal to slate hierarchy */
-  --text-1:      #1E293B;  /* primary — charcoal */
-  --text-2:      #4A5568;  /* secondary — slate */
-  --text-3:      #64748B;  /* tertiary */
-  --text-4:      #94A3B8;  /* disabled / quaternary — steel */
+  --c-rule:        222 219 211;  /* #DEDBD3 hairlines */
+  --c-rule-2:      189 185 175;  /* #BDB9AF strong lines, inputs */
 
-  /* Brand — saturated cobalt blue. Primary accent color. */
-  --brand:       #2563EB;  /* primary blue */
-  --brand-hover: #1D4ED8;  /* darken on hover */
-  --brand-dim:   #DBEAFE;  /* tint for backgrounds, selected states */
-  --brand-ink:   #FFFFFF;  /* text on brand-colored buttons */
+  --c-carbon:      17 18 20;     /* #111214 dark bands, footer */
+  --c-carbon-2:    27 28 32;     /* #1B1C20 panels on carbon */
+  --c-carbon-3:    44 46 51;     /* #2C2E33 rules on carbon */
+  --c-fog:         242 241 237;  /* #F2F1ED text on carbon */
+  --c-fog-2:       167 169 174;  /* #A7A9AE muted on carbon (8:1) */
 
-  /* Accent — teal blue. Reserved: small highlights, badges, data points. Use sparingly (3-4 per page max). */
-  --accent:        #0891B2;
-  --accent-hover:  #06B6D4;
-  --accent-dim:    #CCFBF1;  /* pale teal tint for badges, hints */
-  --accent-ink:    #0F172A;  /* dark text on accent buttons */
+  --c-brand:       45 28 128;    /* #2D1C80 logo indigo (13:1 with white) */
+  --c-brand-hover: 33 20 96;     /* #211460 */
+  --c-brand-tint:  236 233 247;  /* #ECE9F7 selected rows */
 
-  /* Status — tuned for light background contrast */
-  --danger:        #B42318;  /* error red — AA on white */
-  --danger-dim:    #FBE5E2;
-  --success:       #0F7A45;  /* success green — AA on white */
-  --success-dim:   #DDF1E5;
+  --c-signal:      217 45 32;    /* #D92D20 gauge needle, errors */
+  --c-success:     15 122 69;    /* #0F7A45 QC stamp, success */
+  --c-whatsapp:    37 211 102;
 
-  /* Motion — same mechanical system, untouched */
-  --ease-mech-out:   cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-mech-in:    cubic-bezier(0.7, 0, 0.84, 0);
-  --ease-mech-flat:  cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-ram:        cubic-bezier(0.23, 1, 0.32, 1);
-  --dur-press:  160ms;
-  --dur-hover:  180ms;
-  --dur-enter:  220ms;
-
-  /* Layout */
-  --container:   1280px;
-  --gutter:      1.5rem;   /* 24px — base 4px × 6 */
-  --gutter-lg:   2rem;     /* 32px — base 4px × 8 */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --container: 1320px;
+  --gutter: 1.25rem;
+  --gutter-lg: 2.5rem;
+  --nav-h: 4.75rem;
 }
 
-/* ──────────────────────────────────────────────────────────────────
-   BASE
-   ────────────────────────────────────────────────────────────────── */
+/* ─── BASE ────────────────────────────────────────────────────── */
 
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    background: var(--surface-0);
-    color: var(--text-1);
+    background: rgb(var(--c-paper));
+    color: rgb(var(--c-ink));
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-    font-feature-settings: "ss01", "cv11", "kern";
+    font-size: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-h) + 1rem);
   }
-
   body {
-    background: var(--surface-0);
-    color: var(--text-1);
+    background: rgb(var(--c-paper));
+    color: rgb(var(--c-ink));
+    font-size: 1.0625rem;
+    line-height: 1.65;
     min-height: 100dvh;
+    overflow-x: clip;
   }
-
-  /* Selection — blue ink on a faint blue background */
   ::selection {
-    background: var(--brand);
-    color: var(--brand-ink);
+    background: rgb(var(--c-brand));
+    color: #fff;
   }
-
-  /* Focus ring — visible, on-brand blue, NOT the browser default */
-  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
-    outline: 2px solid var(--brand);
-    outline-offset: 2px;
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 2px solid rgb(var(--c-brand));
+    outline-offset: 3px;
   }
-
-  /* Headings default to display font */
   h1, h2, h3, h4 {
-    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 500;
-    color: var(--text-1);
+    font-family: var(--font-display), "Arial Narrow", sans-serif;
+    font-weight: 600;
+    line-height: 1;
+    text-wrap: balance;
   }
-
-  /* Headings never have descenders clipped when using leading-tight */
-  h1, h2, h3, h4, h5, h6 {
-    line-height: 1.05;
-    padding-bottom: 0.05em;
-  }
-
-  /* Numeric tabular — important for spec sheets */
-  .font-mono, code, kbd {
-    font-variant-numeric: tabular-nums;
-  }
+  p { text-wrap: pretty; }
+  .font-mono, code, kbd { font-variant-numeric: tabular-nums; }
 }
 
-/* ──────────────────────────────────────────────────────────────────
-   COMPONENT UTILITIES — engineering primitives
-   ────────────────────────────────────────────────────────────────── */
+/* ─── COMPONENTS ──────────────────────────────────────────────── */
 
 @layer components {
-
-  /* Container — fixed max with hairline edges */
   .container-edge {
     max-width: var(--container);
     margin-inline: auto;
@@ -247,387 +97,454 @@ html.js-loaded [data-stagger] {
     .container-edge { padding-inline: var(--gutter-lg); }
   }
 
-  /* Section number — small monospace coord-style label */
-  .section-num {
+  .section    { padding-block: clamp(4.5rem, 2.75rem + 5.5vw, 8.5rem); }
+  .section-sm { padding-block: clamp(3rem, 2rem + 3vw, 5rem); }
+
+  /* ── Type ─────────────────────────────────────────────────── */
+  /* Home hero only */
+  .t-display {
+    font-family: var(--font-display), "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: clamp(3.1rem, 1.4rem + 6.4vw, 7.25rem);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+  }
+  /* Page titles (h1) */
+  .t-h1 {
+    font-family: var(--font-display), "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: clamp(2.75rem, 1.55rem + 4.6vw, 5.75rem);
+    line-height: 0.95;
+    letter-spacing: -0.005em;
+  }
+  /* Section titles (h2) */
+  .t-h2 {
+    font-family: var(--font-display), "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: clamp(2.2rem, 1.5rem + 2.8vw, 4rem);
+    line-height: 1;
+  }
+  /* Card / sub-section titles */
+  .t-h3 {
+    font-family: var(--font-display), "Arial Narrow", sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.5rem, 1.3rem + 0.7vw, 1.95rem);
+    line-height: 1.08;
+  }
+  .t-lede {
+    font-size: clamp(1.1rem, 1.02rem + 0.35vw, 1.3rem);
+    line-height: 1.6;
+    color: rgb(var(--c-ink-2));
+  }
+  /* Short label above a title — plain words, brand colour */
+  .t-kicker {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgb(var(--c-brand));
+  }
+  /* Spec keys, part codes, standards — engineering data voice */
+  .t-label {
     font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.6875rem;  /* micro */
-    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-3);
+    color: rgb(var(--c-ink-3));
+  }
+
+  /* ── Buttons ───────────────────────────────────────────────── */
+  .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-  }
-  .section-num::before {
-    content: "";
-    display: inline-block;
-    width: 1.5rem;
-    height: 1px;
-    background: var(--accent);
-  }
-
-  /* Hairline divider */
-  .hairline {
-    border-color: var(--hairline);
-  }
-
-  /* Mechanical press — tactile button feel */
-  .press {
-    transition: transform var(--dur-press) var(--ease-mech-out);
-  }
-  .press:active {
-    transform: scale(0.97);
-  }
-
-  /* Button: primary (blue, used for the ONE main CTA per screen) */
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--brand);
-    color: var(--brand-ink);
-    font-family: var(--font-body);
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 3.125rem;
+    padding: 0.8rem 1.4rem;
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
     font-size: 1rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
-    padding: 0.875rem 1.75rem;
-    border: 1px solid var(--brand);
+    line-height: 1.1;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    white-space: nowrap;
     transition:
-      background-color var(--dur-hover) var(--ease-mech-flat),
-      border-color var(--dur-hover) var(--ease-mech-flat);
+      background-color 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease;
   }
-  .btn-primary:hover {
-    background: var(--brand-hover);
-    border-color: var(--brand-hover);
-  }
+  .btn .arrow { display: inline-block; transition: transform 220ms var(--ease); }
+  .btn:hover .arrow { transform: translateX(4px); }
+  .btn svg { width: 1.15em; height: 1.15em; flex-shrink: 0; }
 
-  /* Button: secondary (blue outline, for non-CTA actions) */
-  .btn-secondary {
+  .btn-primary { background: rgb(var(--c-brand)); color: #fff; border-color: rgb(var(--c-brand)); }
+  .btn-primary:hover { background: rgb(var(--c-brand-hover)); border-color: rgb(var(--c-brand-hover)); }
+
+  .btn-outline { background: transparent; color: rgb(var(--c-ink)); border-color: rgb(var(--c-ink)); }
+  .btn-outline:hover { background: rgb(var(--c-ink)); color: #fff; }
+
+  .btn-light { background: #fff; color: rgb(var(--c-ink)); border-color: #fff; }
+  .btn-light:hover { background: rgb(var(--c-paper-3)); border-color: rgb(var(--c-paper-3)); }
+
+  .btn-outline-light { background: transparent; color: #fff; border-color: rgb(255 255 255 / 0.45); }
+  .btn-outline-light:hover { background: #fff; color: rgb(var(--c-ink)); border-color: #fff; }
+
+  .btn-whatsapp { background: rgb(var(--c-whatsapp)); color: #0b2e17; border-color: rgb(var(--c-whatsapp)); }
+  .btn-whatsapp:hover { background: #1fb85a; border-color: #1fb85a; }
+
+  .btn-sm { min-height: 2.625rem; padding: 0.55rem 1rem; font-size: 0.9375rem; }
+  .btn-lg { min-height: 3.5rem; padding: 1rem 1.75rem; font-size: 1.0625rem; }
+
+  /* ── Links ─────────────────────────────────────────────────── */
+  /* Inline text link */
+  .link {
+    color: rgb(var(--c-brand));
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .link:hover { text-decoration-thickness: 2px; }
+  /* Standalone "go somewhere" link: underlined label + arrow */
+  .link-arrow {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    background: transparent;
-    color: var(--brand);
-    font-family: var(--font-body);
-    font-size: 1rem;
+    gap: 0.6rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
-    padding: 0.875rem 1.75rem;
-    border: 1px solid var(--brand);
-    transition:
-      background-color var(--dur-hover) var(--ease-mech-flat),
-      color var(--dur-hover) var(--ease-mech-flat);
+    color: rgb(var(--c-ink));
+    padding-bottom: 0.2rem;
+    border-bottom: 1px solid currentColor;
+    transition: color 180ms ease;
   }
-  .btn-secondary:hover {
-    background: var(--brand);
-    color: var(--brand-ink);
-  }
+  .link-arrow .arrow { transition: transform 220ms var(--ease); }
+  .link-arrow:hover { color: rgb(var(--c-brand)); }
+  .link-arrow:hover .arrow { transform: translateX(4px); }
 
-  /* Button: ghost (outline only, neutral) */
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: transparent;
-    color: var(--text-1);
-    font-family: var(--font-body);
-    font-size: 1rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    padding: 0.875rem 1.75rem;
-    border: 1px solid var(--border);
-    transition:
-      border-color var(--dur-hover) var(--ease-mech-flat),
-      color var(--dur-hover) var(--ease-mech-flat);
+  /* ── Surfaces ──────────────────────────────────────────────── */
+  /* Catalogue grid: cells share 1px hairlines (set the cell bg yourself) */
+  .rule-grid {
+    display: grid;
+    gap: 1px;
+    background: rgb(var(--c-rule));
+    border: 1px solid rgb(var(--c-rule));
   }
-  .btn-ghost:hover {
-    border-color: var(--brand);
-    color: var(--brand);
+  .rule-grid--dark {
+    background: rgb(var(--c-carbon-3));
+    border-color: rgb(var(--c-carbon-3));
   }
+  /* Clickable panel: the image inside (.zoom) eases in slightly on hover */
+  .panel-link { transition: background-color 200ms ease; }
+  .panel-link .zoom { transition: transform 700ms var(--ease); }
+  .panel-link:hover .zoom { transform: scale(1.04); }
 
-  /* "Hydraulic ram" line — extends on hover like a piston.
-     Blue by default (general hover). Orange variant for CTA-adjacent. */
-  .ram {
+  /* Product photo well: white JPG/PNG backgrounds blend into the grey */
+  .photo-well {
     position: relative;
-    display: inline-block;
+    overflow: hidden;
+    background: rgb(var(--c-paper-3));
   }
-  .ram::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -2px;
-    height: 1px;
-    width: 0;
-    background: var(--brand);
-    transition: width 220ms var(--ease-ram);
-  }
-  .ram:hover::after,
-  .ram:focus-visible::after {
-    width: 100%;
-  }
-  /* Accent variant — use sparingly, near CTA only */
-  .ram--accent::after {
-    background: var(--accent);
-  }
+  .photo-well img { mix-blend-mode: multiply; }
 
-  /* Spec table row — engineering data, hairline-divided */
+  /* Scene photography in black & white keeps mixed stock consistent */
+  .photo-bw { filter: grayscale(1) contrast(1.05); }
+
+  /* ── Data ──────────────────────────────────────────────────── */
+  .spec-table { border-top: 1px solid rgb(var(--c-ink)); }
   .spec-row {
     display: grid;
-    grid-template-columns: 12rem 1fr;
-    gap: 1.5rem;   /* 24px — scale 6 */
-    padding-block: 0.875rem;  /* 14px — close to 3/4 */
-    border-bottom: 1px solid var(--hairline);
-    background: var(--surface-0);
-    transition: background-color var(--dur-hover) var(--ease-mech-flat);
-  }
-  .spec-row:nth-child(even) {
-    background: var(--surface-1);
-  }
-  .spec-row:hover {
-    background: var(--surface-3);
+    grid-template-columns: minmax(8.5rem, 13rem) 1fr;
+    gap: 1.25rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgb(var(--c-rule));
   }
   .spec-row > dt {
     font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.8125rem;
-    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-3);
+    color: rgb(var(--c-ink-3));
+    padding-top: 0.2rem;
   }
-  .spec-row > dd {
-    color: var(--text-1);
-    font-size: 1rem;
-  }
-  .spec-row:nth-child(even) > dt {
-    color: var(--text-3);
-  }
-  .spec-row:nth-child(even) > dd {
-    color: var(--text-1);
-  }
+  .spec-row > dd { font-weight: 500; color: rgb(var(--c-ink)); }
   @media (max-width: 640px) {
-    .spec-row {
-      grid-template-columns: 1fr;
-      gap: 0.25rem;
-    }
-    .spec-row:nth-child(even) {
-      background: var(--surface-0);
-    }
+    .spec-row { grid-template-columns: 1fr; gap: 0.2rem; }
+  }
+  .spec-table--dark { border-top-color: rgb(var(--c-fog)); }
+  .spec-table--dark .spec-row { border-bottom-color: rgb(var(--c-carbon-3)); }
+  .spec-table--dark .spec-row > dt { color: rgb(var(--c-fog-2)); }
+  .spec-table--dark .spec-row > dd { color: rgb(var(--c-fog)); }
+
+  /* ── Forms ─────────────────────────────────────────────────── */
+  .input {
+    display: block;
+    width: 100%;
+    min-height: 3.125rem;
+    border: 1px solid rgb(var(--c-rule-2));
+    border-radius: 2px;
+    background: #fff;
+    padding: 0.75rem 0.9rem;
+    font-size: 1rem;
+    color: rgb(var(--c-ink));
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+  .input::placeholder { color: rgb(var(--c-ink-3) / 0.8); }
+  .input:hover { border-color: rgb(var(--c-ink-3)); }
+  .input:focus {
+    outline: none;
+    border-color: rgb(var(--c-brand));
+    box-shadow: inset 0 0 0 1px rgb(var(--c-brand));
+  }
+  .input[aria-invalid="true"] {
+    border-color: rgb(var(--c-signal));
+    box-shadow: inset 0 0 0 1px rgb(var(--c-signal));
+  }
+
+  /* ── Marks ─────────────────────────────────────────────────── */
+  /* Rubber-stamp mark (QC passed, certified) */
+  .stamp {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    border: 2px solid currentColor;
+    padding: 0.35rem 0.75rem 0.4rem;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.2;
   }
 
   /* "Placeholder" badge — marks slots the client must replace */
   .placeholder-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
     font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.625rem;  /* ~10px */
-    letter-spacing: 0.18em;
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--accent);
-    background: var(--accent-dim);
-    border: 1px solid var(--accent);
-    padding: 0.125rem 0.5rem;
+    color: rgb(var(--c-ink-2));
+    border: 1px dashed rgb(var(--c-rule-2));
+    padding: 0.125rem 0.4rem;
   }
 
-  /* "Engineering cell" — the bordered raised card used for spec sections.
-     Elevation via 1px border + surface tint, no shadow. */
-  .eng-cell {
-    background: var(--surface-0);
-    border: 1px solid var(--hairline);
-    transition: background-color var(--dur-hover) var(--ease-mech-flat);
-  }
-  .eng-cell:hover {
-    background: var(--surface-1);
-  }
-
-  /* Hairline divider with brand-tinted gradient (hero / section dividers) */
-  .rule-fade {
-    background: linear-gradient(
-      to right,
-      transparent,
-      var(--brand) 50%,
-      transparent
-    );
-  }
-
-  /* Accent line variant for teal highlights */
-  .rule-accent {
-    background: linear-gradient(
-      to right,
-      transparent,
-      var(--accent) 50%,
-      transparent
-    );
-  }
-  /* Dark CTA band — brand-colored full-width section */
-  .cta-band {
-    background: var(--brand);
-    color: var(--brand-ink);
-    padding: 4rem var(--gutter);
-  }
-  @media (min-width: 1024px) {
-    .cta-band { padding: 5rem var(--gutter-lg); }
-  }
-  .cta-band h2,
-  .cta-band h3,
-  .cta-band p {
-    color: var(--brand-ink);
-  }
-  .cta-band .btn-primary {
-    background: var(--brand-ink);
-    color: var(--brand);
-    border-color: var(--brand-ink);
-  }
-  .cta-band .btn-primary:hover {
-    background: var(--surface-0);
-    border-color: var(--surface-0);
-  }
-
-  /* WhatsApp floating button */
+  /* Floating WhatsApp button — how most customers reach the office */
   .whatsapp-float {
     position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
+    bottom: 1.25rem;
+    right: 1.25rem;
     z-index: 50;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 3.5rem;
     height: 3.5rem;
-    background: #25D366;
+    background: rgb(var(--c-whatsapp));
+    color: #fff;
     border-radius: 9999px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    transition: transform var(--dur-press) var(--ease-mech-out), box-shadow var(--dur-hover) var(--ease-mech-flat);
+    box-shadow: 0 6px 18px -6px rgb(0 0 0 / 0.35);
+    transition: transform 160ms var(--ease);
   }
-  .whatsapp-float:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 20px rgba(37,211,102,0.4);
-  }
-  .whatsapp-float svg {
-    width: 1.75rem;
-    height: 1.75rem;
-    fill: white;
-  }
+  .whatsapp-float:hover { transform: translateY(-2px); }
+  .whatsapp-float svg { width: 1.75rem; height: 1.75rem; fill: currentColor; }
 }
 
-/* ─── AMBIENT / LIFELIKE EFFECTS ─────────────────────────────────
-   Mechanical, short-loop, no bounce. Used very sparingly.
-   .flow-line  = stroke-dashoffset scroll on an SVG path (set --flow-len)
-   .breathe    = gentle opacity pulse (badges, live indicators)
-   .ping       = one-shot ripple dot (used on hero slide indicators)
-   .hero-ram   = the brand-blue "ram" line that extends under hero CTA on load
-   .lift-hover = subtle 2px lift on hover (kept within engineering aesthetic)
+/* ──────────────────────────────────────────────────────────────────
+   MOTION — every animation explains something. Nothing loops.
+
+   1. LOAD    .load-rise — hero copy arrives in reading order.
+              style={d(160)} from @/lib/style sets the sequence delay.
+   2. REVEAL  data-reveal (one block) / data-reveal-group (children in
+              reading order). Driven by components/AnimationObserver.tsx.
+   3. MEANING components/motion/*:
+              HoseAnatomy   — an assembly is built fitting → hose, then each
+                              part is identified in order.
+              PressureGauge — the needle climbs to test pressure, then the
+                              QC stamp lands.
+              OrderFlow     — an order moves step to step, enquiry → despatch.
+              CountUp       — a number counts to its value once.
+   4. AFFORDANCE hover states on links, buttons, panels.
+
+   Hidden states apply only under html.js (set before first paint by the
+   inline script in app/layout.tsx; removed after 3.5s if the app never
+   boots). Reduced motion: everything is shown, nothing moves.
    ────────────────────────────────────────────────────────────────── */
 
-.flow-line {
-  stroke-dasharray: var(--flow-len, 600);
-  stroke-dashoffset: 0;
-  animation: flowStroke var(--flow-dur, 3.5s) linear infinite;
-  animation-play-state: running;
+@keyframes ih-rise {
+  from { opacity: 0; translate: 0 14px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+@keyframes ih-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes ih-stamp {
+  0%   { opacity: 0; transform: rotate(-6deg) scale(1.35); }
+  60%  { opacity: 1; transform: rotate(-6deg) scale(0.97); }
+  100% { opacity: 1; transform: rotate(-6deg) scale(1); }
+}
+@keyframes shakeX {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-4px, 0, 0); }
+  40% { transform: translate3d(4px, 0, 0); }
+  60% { transform: translate3d(-3px, 0, 0); }
+  80% { transform: translate3d(2px, 0, 0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 1. LOAD */
+.load-rise {
+  animation: ih-rise 0.8s var(--ease) backwards;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+.load-fade {
+  animation: ih-fade 1s ease backwards;
+  animation-delay: calc(var(--d, 0) * 1ms);
 }
 
-.breathe {
-  animation: breathe 2.6s ease-in-out infinite;
+/* 2. REVEAL */
+html.js [data-reveal]:not([data-revealed]),
+html.js [data-reveal-group]:not([data-revealed]) > * {
+  opacity: 0;
 }
+[data-reveal][data-revealed] {
+  animation: ih-rise 0.75s var(--ease) backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+[data-reveal-group][data-revealed] > * { animation: ih-rise 0.65s var(--ease) backwards; }
+[data-reveal-group][data-revealed] > :nth-child(2)  { animation-delay: 60ms; }
+[data-reveal-group][data-revealed] > :nth-child(3)  { animation-delay: 120ms; }
+[data-reveal-group][data-revealed] > :nth-child(4)  { animation-delay: 180ms; }
+[data-reveal-group][data-revealed] > :nth-child(5)  { animation-delay: 240ms; }
+[data-reveal-group][data-revealed] > :nth-child(6)  { animation-delay: 300ms; }
+[data-reveal-group][data-revealed] > :nth-child(7)  { animation-delay: 360ms; }
+[data-reveal-group][data-revealed] > :nth-child(8)  { animation-delay: 420ms; }
+[data-reveal-group][data-revealed] > :nth-child(9)  { animation-delay: 480ms; }
+[data-reveal-group][data-revealed] > :nth-child(n+10) { animation-delay: 540ms; }
 
-.ping {
+/* 3a. ORDER FLOW — numbered stations joined by a line that fills */
+.flow-node {
   position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  border: 1px solid rgb(var(--c-rule-2));
+  background: rgb(var(--c-paper));
+  color: rgb(var(--c-ink-3));
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
-.ping::after {
-  content: "";
+.flow-node[data-on],
+html:not(.js) .flow-node {
+  background: rgb(var(--c-brand));
+  border-color: rgb(var(--c-brand));
+  color: #fff;
+  transition-delay: 0.25s;
+}
+.flow-link {
+  position: absolute;
+  left: calc(1.5rem - 1px);
+  top: 3rem;
+  bottom: 0;
+  width: 2px;
+  background: rgb(var(--c-rule));
+  overflow: hidden;
+}
+.flow-link-fill {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  background: currentColor;
-  animation: pingDot 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
-  pointer-events: none;
+  background: rgb(var(--c-brand));
+  transform-origin: top center;
+  transform: scaleY(0);
+  transition: transform 0.45s var(--ease);
 }
+.flow-link[data-filled] .flow-link-fill,
+html:not(.js) .flow-link-fill { transform: none; }
+@media (min-width: 1024px) {
+  .flow-link {
+    left: 3rem;
+    top: calc(1.5rem - 1px);
+    bottom: auto;
+    width: calc(100% - 3rem + 2rem);
+    height: 2px;
+  }
+  .flow-link-fill { transform-origin: left center; transform: scaleX(0); }
+}
+.flow--dark .flow-node {
+  background: rgb(var(--c-carbon));
+  border-color: rgb(var(--c-carbon-3));
+  color: rgb(var(--c-fog-2));
+}
+.flow--dark .flow-node[data-on],
+html:not(.js) .flow--dark .flow-node {
+  background: #fff;
+  border-color: #fff;
+  color: rgb(var(--c-ink));
+}
+.flow--dark .flow-link { background: rgb(var(--c-carbon-3)); }
+.flow--dark .flow-link-fill { background: #fff; }
 
-.hero-ram {
-  display: block;
-  height: 2px;
-  width: 100%;
-  background: var(--brand);
-  transform-origin: left center;
-  transform: scaleX(0);
-  animation: heroRam 700ms cubic-bezier(0.23, 1, 0.32, 1) 350ms forwards;
+/* 3b. PRESSURE GAUGE — final state without JS */
+html:not(.js) .gauge-needle {
+  transform: rotate(var(--nojs-rot));
+  transform-origin: 120px 120px;
 }
+.gauge-stamp { opacity: 0; transform: rotate(-6deg); }
+.gauge-stamp[data-on] { animation: ih-stamp 0.45s var(--ease) both; }
+html:not(.js) .gauge-stamp { opacity: 1; animation: none; }
 
-.lift-hover {
-  transition:
-    transform var(--dur-hover) var(--ease-mech-flat),
-    border-color var(--dur-hover) var(--ease-mech-flat),
-    background-color var(--dur-hover) var(--ease-mech-flat);
+/* 3c. HOSE ANATOMY — built left to right, then parts called out */
+.anatomy-drawing {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
-.lift-hover:hover {
-  transform: translateY(-2px);
+.anatomy[data-built] .anatomy-drawing,
+html:not(.js) .anatomy-drawing { clip-path: inset(0 0 0 0); }
+.anatomy-callout {
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
-
-/* Inline number cell used on Why-Us / Standards — scales 1 → 1.06 on hover */
-.num-pop {
-  transition: transform var(--dur-hover) var(--ease-mech-flat),
-              background-color var(--dur-hover) var(--ease-mech-flat);
-}
-.group:hover .num-pop,
-.num-pop:hover {
-  transform: scale(1.06);
-  background: var(--brand-hover);
-}
-
-/* ─── FORM MICRO-INTERACTIONS ──────────────────────────────────── */
-
-.field {
-  position: relative;
-}
-.field input,
-.field select,
-.field textarea {
-  transition:
-    border-color var(--dur-hover) var(--ease-mech-flat),
-    background-color var(--dur-hover) var(--ease-mech-flat);
-}
-/* The "ram" line that extends under text inputs on focus — like a piston */
-.field::after {
-  content: "";
+.anatomy-callout[data-on],
+html:not(.js) .anatomy-callout { opacity: 1; }
+.anatomy-marker {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--brand);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 220ms var(--ease-ram);
-  pointer-events: none;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  translate: -50% -50%;
+  background: rgb(var(--c-paper));
+  border: 1.5px solid rgb(var(--c-ink));
+  color: rgb(var(--c-ink));
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0;
+  scale: 0.6;
+  transition: opacity 0.3s ease, scale 0.35s var(--ease), background-color 0.2s ease, color 0.2s ease;
 }
-.field:focus-within::after {
-  transform: scaleX(1);
-}
-/* Existing focus state: keep brand-color border-bottom; suppress the default */
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  border-bottom-color: transparent;
-}
-
-/* Error shake — applied by ContactForm when validation fails on submit */
-.field--err input,
-.field--err select,
-.field--err textarea {
-  border-bottom-color: var(--danger) !important;
-}
-.field--err {
-  animation: shakeX 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97);
-}
-.field--err::after {
-  background: var(--danger) !important;
-  transform: scaleX(1) !important;
+.anatomy-marker[data-on],
+html:not(.js) .anatomy-marker { opacity: 1; scale: 1; }
+.anatomy-marker[data-hot] {
+  background: rgb(var(--c-brand));
+  border-color: rgb(var(--c-brand));
+  color: #fff;
 }
 
-/* Success state for the form footer message */
-.form-msg--ok    { animation: fadeInUp 0.45s var(--ease-mech-out) forwards; }
-.form-msg--err   { animation: shakeX 0.42s var(--ease-mech-flat); }
+/* JS / no-JS helpers for animated readouts */
+html:not(.js) .js-only { display: none !important; }
+html.js .nojs-only { display: none !important; }
 
-/* Submit button spinner — rotating brand ring (8px) */
+/* ─── FORM MICRO-INTERACTIONS ─────────────────────────────────── */
+.field--err { animation: shakeX 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+.form-msg--ok  { animation: ih-rise 0.45s var(--ease) backwards; }
+.form-msg--err { animation: shakeX 0.42s ease; }
 .spinner {
   width: 14px;
   height: 14px;
@@ -637,38 +554,17 @@ html.js-loaded [data-stagger] {
   animation: spin 0.7s linear infinite;
   display: inline-block;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
 
-/* Reduced motion: respect everywhere */
+/* ─── REDUCED MOTION ──────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .flow-line,
-  .breathe,
-  .ping::after,
-  .hero-ram,
-  .lift-hover,
-  .num-pop,
-  .field--err,
-  .form-msg--ok,
-  .form-msg--err,
-  .spinner {
-    animation: none !important;
-    transition: none !important;
-  }
-  .hero-ram { transform: scaleX(1); }
-  .field::after { transform: scaleX(1); }
-}
-
-/* ──────────────────────────────────────────────────────────────────
-   REDUCED MOTION — mandatory
-   ────────────────────────────────────────────────────────────────── */
-
-@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.js [data-reveal]:not([data-revealed]),
+  html.js [data-reveal-group]:not([data-revealed]) > * { opacity: 1; }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
+    transition-delay: 0ms !important;
   }
 }
