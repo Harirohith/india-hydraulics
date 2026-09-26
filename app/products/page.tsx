@@ -1,222 +1,151 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
-import { productCategories, company } from "@/lib/content";
-import { catalogue, hsnCodes, catalogueStats } from "@/lib/products";
-import { ISOBadge } from "@/components/ISOBadge";
+import { company } from "@/lib/content";
+import { catalogueStats, hsnCodes } from "@/lib/products";
+import { PageHero } from "@/components/PageHero";
+import { SectionHead } from "@/components/SectionHead";
+import { CTABand } from "@/components/CTABand";
 import { ProductSearch } from "@/components/ProductSearch";
+import { FamilyIndex } from "@/components/products/FamilyIndex";
+import { FamilyRows } from "@/components/products/FamilyRows";
+import { families, familyRows } from "@/components/products/families";
 
-const categoryImages: Record<string, string> = {
-  hoses:                  "/im/Hydraulic_hose.jpg",
-  // front_page_1 shows a drilling rig — UHP hoses are the primary fluid circuit in borewell rigs
-  assemblies:             "/products/assy-hose-assembly.png",
-  fittings:               "/im/Hose_fittings.jpg",
-  seals:                  "/im/orings.jpg",
-  couplings:              "/im/couplings.jpg",
-  "air-water-gas":        "/products/cement-hose-assembly.png",
-  "stainless-corrugated": "/stock/factory-pipes.jpg",
-  uhp:                    "/im/front_page_1.jpg",
-  general:                "/products/hose-guard-20mm-safety.png",
-};
-
-export const metadata = {
+export const metadata: Metadata = {
   title: "Products",
   description:
-    "Hydraulic hoses, hose assemblies, fittings, adapters, seals, couplings, stainless steel corrugated hoses and ultra-high-pressure hoses. ISO, SAE, DIN, JIS.",
+    "Hydraulic hoses, crimped hose assemblies, fittings and adapters, seals, couplings, stainless steel corrugated and ultra-high-pressure hoses — specifications, full catalogue and HSN codes.",
 };
+
+/*
+ * Story: a buyer arrives knowing roughly what they need.
+ *   1. What we make, and how to ask (hero)
+ *   2. The nine families at a glance (contents / sticky family bar)
+ *   3. Each family's specification, set as catalogue sheets
+ *   4. Every listed item, searchable, each with its own quote link
+ *   5. HSN codes for the purchase team
+ *   6. Ask for a price
+ */
+
+const WORDS = [
+  "Zero",
+  "One",
+  "Two",
+  "Three",
+  "Four",
+  "Five",
+  "Six",
+  "Seven",
+  "Eight",
+  "Nine",
+  "Ten",
+  "Eleven",
+  "Twelve",
+];
+const spelled = (n: number) => WORDS[n] ?? String(n);
+
+// All four listed HSN codes share the same heading; state it once.
+const hsnParts = hsnCodes.map((h) => {
+  const [head, ...rest] = h.description.split(" — ");
+  return { code: h.code, head, detail: rest.join(" — ") };
+});
+const hsnHead = hsnParts.every((p) => p.detail && p.head === hsnParts[0].head) ? hsnParts[0].head : null;
 
 export default function ProductsPage() {
   return (
     <>
-      {/* ─── HERO ─── */}
-      <section className="relative overflow-hidden py-20 md:py-32 flex items-center">
-        <div className="absolute inset-0">
-          <Image
-            src="/stock/machinery-valves.jpg"
-            alt=""
-            aria-hidden="true"
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gray-950/75" />
-        </div>
-        <div className="container-edge relative z-10">
-          <div
-            className="flex flex-wrap items-center gap-3 mb-5"
-            data-anim="fade-up"
-            data-delay="80"
-          >
-            <span className="inline-block bg-white/10 border border-white/25 text-white px-3 py-1 text-sm font-medium">
-              Product catalogue
-            </span>
-            <ISOBadge />
-          </div>
-          <h1
-            data-anim="fade-up"
-            data-delay="180"
-            className="max-w-3xl font-display text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight3 text-white leading-[1.1]"
-          >
-            Multiple product categories. One standard of build.
-          </h1>
-          <p
-            data-anim="fade-up"
-            data-delay="300"
-            className="mt-5 max-w-[58ch] text-base md:text-lg leading-relaxed text-white/75"
-          >
-            Every category below is stocked or made-to-order. Final spec depends on duty, medium and standard reference.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── TOC ─── */}
-      <section className="border-b border-line-1 bg-surface-0">
-        <div className="container-edge py-5">
-          <ul
-            className="flex flex-wrap gap-x-5 gap-y-2 text-sm"
-            data-stagger
-            data-stagger-step="40"
-          >
-            {productCategories.map((p) => (
-              <li key={p.id}>
-                <a
-                  href={`#${p.id}`}
-                  className="ram text-ink-2 hover:text-brand font-medium"
-                >
-                  {p.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* ─── CATEGORIES WITH IMAGES ─── */}
-      {productCategories.map((cat, i) => {
-        const isOdd = i % 2 === 1;
-        return (
-          <section
-            key={cat.id}
-            id={cat.id}
-            className={`py-16 md:py-24 ${isOdd ? "bg-surface-1" : "bg-surface-0"}`}
-          >
-            <div className="container-edge">
-              <div className="grid grid-cols-1 gap-10 md:grid-cols-12 items-center">
-                {/* Image */}
-                <div
-                  className={`md:col-span-4 ${i % 2 === 0 ? "md:order-1" : "md:order-2"}`}
-                  data-anim={i % 2 === 0 ? "slide-left" : "slide-right"}
-                >
-                  <div className="relative aspect-square w-full bg-surface-2 border border-line-1 overflow-hidden group">
-                    <Image
-                      src={categoryImages[cat.id] || "/products/connectors.jpg"}
-                      alt={cat.label}
-                      fill
-                      className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                    <div className="absolute top-3 left-3 font-mono text-[10px] tracking-label uppercase text-ink-3 bg-surface-0/90 px-2 py-1 border border-line-1">
-                      {cat.code}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div
-                  className={`md:col-span-8 ${i % 2 === 0 ? "md:order-2" : "md:order-1"}`}
-                  data-stagger
-                  data-stagger-step="70"
-                >
-                  <div className="flex items-baseline gap-3 mb-4">
-                    <span className="text-xs uppercase tracking-wide font-medium text-brand">
-                      {cat.code}
-                    </span>
-                    <span className="text-xs text-ink-3 font-mono tabular-nums">
-                      {String(i + 1).padStart(2, "0")} / {String(productCategories.length).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <h2 className="font-display text-2xl md:text-3xl font-medium text-ink-1">
-                    {cat.label}
-                  </h2>
-                  <p className="mt-3 text-base md:text-lg leading-relaxed text-ink-2 max-w-[54ch]">
-                    {cat.description}
-                  </p>
-
-                  <dl className="mt-6">
-                    {cat.specs.map(([label, value]) => (
-                      <div key={label} className="spec-row">
-                        <dt>{label}</dt>
-                        <dd>{value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </section>
-        );
-      })}
-
-      {/* ─── PRODUCT CATALOGUE GRID — Search + Filter (Features 5 & 8) ─── */}
-      <section id="catalogue" className="py-20 md:py-28 bg-surface-0">
-        <div className="container-edge">
-          <span className="section-num" data-anim="fade" data-delay="80">
-            Reference / Full catalogue
+      <PageHero
+        crumb="Products"
+        kicker="Product catalogue"
+        title="Hoses, fittings and assemblies, built to your drawing."
+        intro={`${spelled(families.length)} product families, stocked or made to order. The final specification depends on the duty, the medium and the standard you work to.`}
+        image="/stock/hydraulic-tubes.jpg"
+        imageAlt="Braided and corrugated hoses and metal tubes on an engine"
+        imagePosition="50% 85%"
+        facts={[
+          { label: "Product families", value: families.length },
+          { label: "Catalogue items", value: catalogueStats.totalProducts },
+          { label: "Rated up to", value: "10,000 psi" },
+          {
+            label: "Standards",
+            // Breaks as a pair of pairs until the column is wide enough for one line.
+            value: (
+              <>
+                <span className="whitespace-nowrap">ISO · SAE</span>
+                <span className="hidden xl:inline"> · </span>
+                <br className="xl:hidden" />
+                <span className="whitespace-nowrap">DIN · JIS</span>
+              </>
+            ),
+          },
+        ]}
+      >
+        <Link href="/contact#enquiry" className="btn btn-primary max-sm:w-full">
+          Request a quote{" "}
+          <span className="arrow" aria-hidden="true">
+            →
           </span>
-          <h2
-            data-anim="fade-up"
-            data-delay="180"
-            className="mt-3 font-display text-3xl md:text-4xl font-medium text-ink-1"
-          >
-            Full product range
-          </h2>
-          <p
-            data-anim="fade-up"
-            data-delay="280"
-            className="mt-3 text-base md:text-lg text-ink-2 mb-12"
-          >
-            {catalogueStats.totalProducts} products across {catalogueStats.totalCategories} categories.
-            Search or filter below — click <span className="text-brand font-medium">Request quote</span> on any product to start an enquiry.
-          </p>
+        </Link>
+        <a href={company.whatsapp} target="_blank" rel="noopener noreferrer" className="btn btn-outline max-sm:w-full">
+          Message on WhatsApp
+        </a>
+      </PageHero>
 
+      {/* Families — the contents bar sticks (desktop) while these scroll past */}
+      <div>
+        <FamilyIndex
+          entries={families.map((f) => ({ id: f.id, code: f.code, label: f.label, short: f.short }))}
+          catalogueCount={catalogueStats.totalProducts}
+        />
+        <FamilyRows rows={familyRows} />
+      </div>
+
+      {/* Full catalogue */}
+      {/* Negative scroll margin: a jump here clears the family bar out from under the header */}
+      <section id="catalogue" aria-labelledby="catalogue-title" className="section -scroll-mt-4 bg-paper">
+        <div className="container-edge">
+          <SectionHead
+            id="catalogue-title"
+            kicker="Full catalogue"
+            title="Every listed item, with a quote link."
+            intro="Search by name, thread or type, or filter by group. Each quote link names the part on the enquiry form, so we know exactly what you are asking about."
+          />
           <ProductSearch />
         </div>
       </section>
 
-      {/* ─── HSN CODES ─── */}
-      <section className="bg-surface-1 py-16 md:py-24">
-        <div className="container-edge grid grid-cols-1 gap-10 md:grid-cols-12">
-          <div className="md:col-span-4">
-            <span className="section-num" data-anim="fade" data-delay="80">
-              Reference / HSN
-            </span>
-            <h2
-              data-anim="fade-up"
-              data-delay="160"
-              className="mt-3 font-display text-2xl font-medium text-ink-1"
-            >
+      {/* HSN codes */}
+      <section id="hsn" aria-labelledby="hsn-title" className="section-sm border-t border-rule bg-paper-2">
+        <div className="container-edge grid gap-10 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-5">
+            <p className="t-kicker">For purchase and accounts teams</p>
+            <h2 id="hsn-title" className="t-h2 mt-3 text-ink">
               HSN codes
             </h2>
-            <p
-              data-anim="fade-up"
-              data-delay="260"
-              className="mt-3 text-base text-ink-2"
-            >
-              Harmonised System codes for customs, GST and procurement.
+            <p className="mt-5 max-w-[44ch] text-ink-2">
+              The codes our hoses are listed under, for purchase orders and GST invoices. If you are not sure which one
+              applies to your item, ask us when you order.
             </p>
           </div>
-          <div className="md:col-span-8">
-            <dl data-stagger data-stagger-step="60">
-              {hsnCodes.map((h) => (
+          <div data-reveal className="lg:col-span-7">
+            {hsnHead && <p className="mb-4 text-ink-2">{hsnHead}:</p>}
+            <dl className="spec-table sm:[&_.spec-row]:grid-cols-[8.5rem_minmax(0,1fr)]">
+              {hsnParts.map((h) => (
                 <div key={h.code} className="spec-row">
-                  <dt className="font-mono tabular-nums">{h.code}</dt>
-                  <dd>{h.description}</dd>
+                  <dt className="!pt-0 !text-base !font-medium !tracking-[0.04em] !text-ink">{h.code}</dt>
+                  <dd className="!font-normal first-letter:uppercase">
+                    {hsnHead ? h.detail : hsnCodes.find((c) => c.code === h.code)?.description}
+                  </dd>
                 </div>
               ))}
             </dl>
           </div>
         </div>
       </section>
+
+      <CTABand
+        title="Found what you need? Ask for a price."
+        body="Send the item name, part number, drawing or sample, with the duty — pressure, medium, temperature, end fittings — and the quantity. We confirm the specification with you and reply within one working day."
+      />
     </>
   );
 }
