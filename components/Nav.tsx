@@ -71,11 +71,11 @@ export function Nav() {
       </div>
 
       <header className="sticky top-0 z-40 border-b border-rule bg-paper">
-        <div className="container-edge flex h-[var(--nav-h)] items-center justify-between gap-6">
-          <Link href="/" className="flex items-center gap-3" aria-label={`${company.name} — home`}>
-            <Image src="/logo-mark.png" alt="" width={46} height={46} priority />
+        <div className="container-edge flex h-[var(--nav-h)] items-center justify-between gap-4 lg:gap-6">
+          <Link href="/" className="flex min-w-0 items-center gap-2.5 sm:gap-3" aria-label={`${company.name} — home`}>
+            <Image src="/logo-mark.png" alt="" width={46} height={46} priority className="h-10 w-10 sm:h-[46px] sm:w-[46px]" />
             <span className="leading-none">
-              <span className="block font-display text-[1.6rem] font-bold uppercase tracking-[0.02em] text-ink">
+              <span className="block whitespace-nowrap font-display text-[1.3rem] font-bold uppercase tracking-[0.02em] text-ink min-[400px]:text-[1.6rem]">
                 India Hydraulics
               </span>
               <span className="mt-1 block text-[12px] text-ink-3">{company.tagline}</span>
@@ -83,7 +83,7 @@ export function Nav() {
           </Link>
 
           <nav aria-label="Primary" className="hidden h-full lg:block">
-            <ul className="flex h-full items-stretch gap-9">
+            <ul className="flex h-full items-stretch gap-7 xl:gap-9">
               {links.map((l) => {
                 const active = isActive(pathname, l.href);
                 return (
@@ -105,7 +105,7 @@ export function Nav() {
           </nav>
 
           <div className="hidden items-center gap-6 lg:flex">
-            <a href={company.phoneHref} className="text-[0.975rem] font-medium text-ink hover:text-brand">
+            <a href={company.phoneHref} className="hidden whitespace-nowrap text-[0.975rem] font-medium text-ink hover:text-brand xl:inline">
               {company.phoneDisplay}
             </a>
             <Link href="/contact#enquiry" className="btn btn-primary btn-sm">
@@ -116,7 +116,7 @@ export function Nav() {
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            className="btn btn-outline btn-sm min-w-[5.5rem] lg:hidden"
+            className="btn btn-outline btn-sm shrink-0 px-3 min-[400px]:min-w-[5.5rem] lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
           >

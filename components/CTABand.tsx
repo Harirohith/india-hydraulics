@@ -37,11 +37,11 @@ export function CTABand({
         </div>
         <dl data-reveal className="self-end border-t border-white/30 lg:col-span-5">
           {[
-            { k: "Phone", v: <a href={company.phoneHref} className="hover:underline">{company.phoneDisplay}</a> },
+            { k: "Phone", v: <a href={company.phoneHref} className="hit hover:underline">{company.phoneDisplay}</a> },
             {
               k: "WhatsApp",
               v: (
-                <a href={company.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                <a href={company.whatsapp} target="_blank" rel="noopener noreferrer" className="hit hover:underline">
                   {company.whatsappDisplay}
                 </a>
               ),
@@ -49,7 +49,7 @@ export function CTABand({
             {
               k: "Email",
               v: (
-                <a href={company.emailHref} className="hover:underline">
+                <a href={company.emailHref} className="hit hover:underline">
                   {emailParts[0]}@<wbr />
                   {emailParts[1]}
                 </a>

@@ -222,6 +222,13 @@
     position: absolute;
     inset: -0.5rem -0.25rem;
   }
+  /* Invisible hit area for small inline links (phone, email) — ≥ 44px tall */
+  .hit { position: relative; }
+  .hit::after {
+    content: "";
+    position: absolute;
+    inset: -0.75rem -0.25rem;
+  }
   .link-arrow .arrow { transition: transform 220ms var(--ease); }
   .link-arrow:hover { color: rgb(var(--c-brand)); }
   .link-arrow:hover .arrow { transform: translateX(4px); }
